@@ -1,0 +1,221 @@
+create table Customer(
+    CID VARCHAR(20) NOT NULL,
+    Password VARCHAR(20) NOT NULL,
+    EMail VARCHAR(40) NOT NULL,
+    Status VARCHAR(20) NOT NULL,
+    FNAME VARCHAR(20) NOT NULL,
+    LNAME VARCHAR(20) NOT NULL,
+    Manager INTEGER,
+    PRIMARY KEY(CID),
+    CHECK((Manager = 0) OR (Manager = 1)),
+	CHECK (Status = 'New' OR Status = 'Green' OR Status = 'Gold' OR Status = 'Silver')
+    );
+    
+create table Address(
+    CID VARCHAR(20) NOT NULL,
+    HouseNumber VARCHAR(20) NOT NULL,
+    Street VARCHAR(20) NOT NULL,
+    City VARCHAR(20) NOT NULL,
+	Apartment VARCHAR(20),
+    State VARCHAR(20) NOT NULL,
+    ZIP VARCHAR(20),
+    PRIMARY KEY(CID),
+    FOREIGN KEY(CID) REFERENCES Customer
+    );
+    
+create table Cart(
+    CID VARCHAR(20) NOT NULL,
+    StockNum VARCHAR(7),
+    Quantity INTEGER,
+    PRIMARY KEY(CID, StockNum),
+    FOREIGN KEY(CID) REFERENCES Customer,
+    FOREIGN KEY(StockNum) REFERENCES Products
+    );
+    
+create table Products(
+    StockNum VARCHAR(7) NOT NULL,
+    Category VARCHAR(20),
+    Manufacturer VARCHAR(20),
+    ModelNum VARCHAR(20) NOT NULL,
+    Warranty INTEGER,
+    Price REAL,
+    PRIMARY KEY(StockNum),
+	CHECK (REGEXP_LIKE(StockNum, '[A-Z][A-Z][0-9][0-9][0-9][0-9][0-9]'))
+    );
+    
+create table Description(
+    StockNum VARCHAR(7),
+    Attribute VARCHAR(200),
+    Value VARCHAR(200),
+    PRIMARY KEY(StockNum, Attribute),
+    FOREIGN KEY(StockNum) REFERENCES Products
+    );
+    
+create table Accessory(
+    StockNum VARCHAR(7),
+    StockNum2 VARCHAR(7),
+    PRIMARY KEY(StockNum, StockNum2),
+    FOREIGN KEY(StockNum) REFERENCES Products,
+    FOREIGN KEY(StockNum2) REFERENCES Products(StockNum),
+    CHECK (StockNum != StockNum2)
+    );
+    
+create table Orders(
+    OrderID VARCHAR(20),
+    CID VARCHAR(20),
+    Price REAL,
+    Month Integer,
+    Year Integer,
+    PRIMARY KEY(OrderID),
+    CHECK ((Month >= 1) AND (Month <= 12)),
+    CHECK (Year >= 1950)
+    );
+    
+create table OrderItems(
+    OrderID VARCHAR(20),
+    StockNum VARCHAR(7),
+    Quantity INTEGER,
+    Price REAL,
+    PRIMARY KEY(OrderID, StockNum),
+    FOREIGN KEY(OrderID) REFERENCES Orders,
+    FOREIGN KEY(StockNum) REFERENCES Products
+    );
+    
+
+    
+
+insert into products values('AA00101', 'laptop', 'HP', '6111', '12', '1630');
+insert into products values('AA00201', 'desktop', 'dell', '420', '12', '239');
+insert into products values('AA00202', 'desktop', 'emachine', '3958', '12', '369.99');
+insert into products values('AA00301', 'monitor', 'envision', '720', '36', '69.99');
+insert into products values('AA00302', 'monitor', 'samsung', '712', '36', '279.99');
+insert into products values('AA00401', 'software', 'symantec', '2005', '60', '19.99');
+insert into products values('AA00402', 'software', 'mcafee', '2005', '60', '19.99');
+insert into products values('AA00501', 'printer', 'HP', '1320', '12', '299.99');
+insert into products values('AA00601', 'camera', 'HP', '435', '3', '119.99');
+insert into products values('AA00602', 'camera', 'cannon', '738', '1', '329.99');
+
+
+
+insert into customer values('Rhagrid', 'Rhagrid', 'rhagrid@cs', 'New', 'Rubeus', 'Hagrid', 0);
+insert into customer values('Mhooch', 'Mhooch', 'Mhooch@cs', 'Green', 'Madam', 'Hooch', 0);
+insert into customer values('Amoody', 'Amoody', 'Amoody@cs', 'Silver', 'Alastor', 'Moody', 0);
+insert into customer values('Pquirrell', 'Pquirrell', 'Pquirrell@cs', 'Gold', 'Professor', 'Quirrell', 0);
+insert into customer values('Sblack', 'Sblack', 'Sblack@cs', 'Green', 'Sirius', 'Black', 1);
+insert into customer values('Ddiggle', 'Ddiggle', 'Ddiggle@cs', 'Gold', 'Dedalus', 'Diggle', 0);
+
+
+
+insert into description values('AA00101', 'Processor speed', '3.33Ghz');
+insert into description values('AA00101', 'Ram size', '512mb');
+insert into description values('AA00101', 'Hard disk size', '100Gb');
+insert into description values('AA00101', 'Display size', '17"');
+insert into description values('AA00201', 'Processor speed', '2.53Ghz');
+insert into description values('AA00201', 'Ram size', '256mb');
+insert into description values('AA00201', 'Hard disk size', '80Gb');
+insert into description values('AA00201', 'OS', 'none');
+insert into description values('AA00202', 'Hard disk size', '80Gb');
+insert into description values('AA00202', 'Processor speed', '2.9Ghz');
+insert into description values('AA00202', 'Ram size', '512mb');
+insert into description values('AA00301', 'Size', '17'');
+insert into description values('AA00301', 'Weight', '25 lb');
+insert into description values('AA00302', 'Size', '17"');
+insert into description values('AA00302', 'Weight', '9.6 lb');
+insert into description values('AA00401', 'Required Disk size', '128mb');
+insert into description values('AA00401', 'Required Ram size', '64mb');
+insert into description values('AA00402', 'Required Disk size', '128mb');
+insert into description values('AA00402', 'Required Ram size', '64mb');
+insert into description values('AA00501', 'Resolution', '1200 dpi');
+insert into description values('AA00501', 'Sheet capacity', '500');
+insert into description values('AA00501', 'Weight', '.4 lb');
+insert into description values('AA00601', 'Resolution', '3.1 Mp');
+insert into description values('AA00601', 'Max Zoom', '5 times');
+insert into description values('AA00601', 'Weight', '24.7 lb');
+insert into description values('AA00602', 'Resolution', '3.1 Mp');
+insert into description values('AA00602', 'Max Zoom', '5 times');
+insert into description values('AA00602', 'Weight', '24.7 lb');
+
+
+insert into accessory values('AA00301', 'AA00201');
+insert into accessory values('AA00301', 'AA00202');
+insert into accessory values('AA00302', 'AA00201');
+insert into accessory values('AA00302', 'AA00202');
+insert into accessory values('AA00401', 'AA00101');
+insert into accessory values('AA00401', 'AA00201');
+insert into accessory values('AA00401', 'AA00202');
+insert into accessory values('AA00402', 'AA00101');
+insert into accessory values('AA00402', 'AA00201');
+insert into accessory values('AA00402', 'AA00202');
+insert into accessory values('AA00501', 'AA00201');
+insert into accessory values('AA00501', 'AA00202');
+insert into accessory values('AA00601', 'AA00201');
+insert into accessory values('AA00601', 'AA00202');
+insert into accessory values('AA00602', 'AA00201');
+insert into accessory values('AA00602', 'AA00202');
+
+insert into address values('Rhagrid', '123', 'MyStreet', 'Goleta', 'apt A', 'Ca', ''); 
+insert into address values('Mhooch', '123', 'MyStreet', 'Goleta', 'apt B', 'Ca', ''); 
+insert into address values('Amoody', '123', 'MyStreet', 'Goleta', 'apt C', 'Ca', ''); 
+insert into address values('Pquirrell', '123', 'MyStreet', 'Goleta', 'apt D', 'Ca', ''); 
+insert into address values('Sblack', '123', 'MyStreet', 'Goleta', 'apt E', 'Ca', ''); 
+insert into address values('Ddiggle', '123', 'MyStreet', 'Goleta', 'apt F', 'Ca', ''); 
+
+create table inventory(
+	StockNum VARCHAR(7),
+	Manufacturer VARCHAR(20),
+	ModelNum VARCHAR(20),
+	Quantity INTEGER,
+	Max INTEGER,
+	Min INTEGER,
+	Location VARCHAR(20),
+	Replenishment INTEGER,
+	PRIMARY KEY(StockNum),
+	CHECK (REGEXP_LIKE(StockNum, '[A-Z][A-Z][0-9][0-9][0-9][0-9][0-9]'))
+	);
+	
+
+create table Manufacturer(
+	NoticeID VARCHAR(20),
+	CoName VARCHAR(20),
+	PRIMARY KEY(NoticeID)
+	);
+	
+	
+create table ShipItems(
+	NoticeID VARCHAR(20),
+	Manufacturer VARCHAR(20),
+	ModelNum VARCHAR(20),
+	Quantity INTEGER,
+	PRIMARY KEY(NoticeID, ModelNum),
+	FOREIGN KEY(NoticeID) REFERENCES Manufacturer
+	);
+	
+
+create table EMartOrder(
+	EOrderID VARCHAR(20),
+	StockNum VARCHAR(7),
+	Quantity INTEGER,
+	Processed INTEGER,
+	PRIMARY KEY(EOrderID, StockNum),
+	CHECK ((Processed = 0) OR (Processed = 1)),
+	CHECK (REGEXP_LIKE(StockNum, '[A-Z][A-Z][0-9][0-9][0-9][0-9][0-9]'))
+	);
+	
+insert into inventory values('AA00101', 'HP', '6111', 12, 20, 5, 'A9', 0);
+insert into inventory values('AA00201', 'dell', '420', 4, 18, 3, 'A7',0);
+insert into inventory values('AA00202', 'emachine', '3958', 9, 14, 7, 'B52',0);
+insert into inventory values('AA00301', 'envision', '720', 6, 28, 15, 'C27',0);
+insert into inventory values('AA00302', 'samsung', '712', 8, 9, 1, 'C13',0);
+insert into inventory values('AA00401', 'symantec', '2005', 14, 26, 4, 'D27',0);
+insert into inventory values('AA00402', 'mcafee', '2005', 5, 8, 2, 'D1',0);
+insert into inventory values('AA00501', 'HP', '1320', 12, 18, 4, 'E7',0);
+insert into inventory values('AA00601', 'HP', '435', 13, 15, 6, 'F9',0);
+insert into inventory values('AA00602', 'cannon', '738', 6, 19, 5, 'F3',0);
+
+
+
+
+sqlplus64 /nolog
+connect d_s_p/5185566@uml.cs.ucsb.edu:1521/xexdb
+
+	
